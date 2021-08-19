@@ -1,0 +1,105 @@
+# INIT POSTGRESQL
+service postgresql start 2> /dev/null
+
+# LOAD DEFAULT SNIPER CONFIGURATION FILE
+dos2unix $INSTALL_DIR/sniper.conf 2> /dev/null > /dev/null
+source $INSTALL_DIR/sniper.conf
+echo -e "$OKBLUE[*]$RESET Loaded configuration file from $INSTALL_DIR/sniper.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+
+if [[ -f /root/.sniper.conf ]]; then
+  # LOAD USER SN1PER CONFIGURATION FILE
+  dos2unix /root/.sniper.conf 2> /dev/null > /dev/null
+  source /root/.sniper.conf
+echo -e "$OKBLUE[*]$RESET Loaded configuration file from /root/.sniper.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+
+  if [[ -f /root/.sniper_api_keys.conf ]]; then
+    # LOAD USER API KEYS (PERSISTENT CONFIG)
+    dos2unix /root/.sniper_api_keys.conf 2> /dev/null > /dev/null
+    source /root/.sniper_api_keys.conf
+    echo -e "$OKBLUE[*]$RESET Loaded API keys from /root/.sniper_api_keys.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+  fi
+
+else
+  # IF NO USER CONFIG PRESENT, CREATE IT FROM THE DEFAULT TEMPLATE
+  cp $INSTALL_DIR/sniper.conf /root/.sniper.conf 2> /dev/null
+  dos2unix /root/.sniper.conf 2> /dev/null > /dev/null
+  source /root/.sniper.conf
+  echo -e "$OKBLUE[*]$RESET Loaded configuration file from /root/.sniper.conf $OKBLUE[$RESET${OKGREEN}OK${RESET}$OKBLUE]$RESET"
+fi
+
+DISTRO=$(cat /etc/*-release | grep DISTRIB_ID= | cut -d'=' -f2)
+
+function help {echo ""
+  echo -e "$OKBLUE[*]$RESET NORMAL MODE"
+  echo ' sniper -t <TARGET>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET SPECIFY CUSTOM CONFIG FILE"
+  echo ' sniper -c /full/path/to/sniper.conf -t <TARGET> -m <MODE> -w <WORKSPACE>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET NORMAL MODE + OSINT + RECON"
+  echo ' sniper -t <TARGET> -o -re'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET STEALTH MODE + OSINT + RECON"
+  echo ' sniper -t <TARGET> -m stealth -o -re'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET DISCOVER MODE"
+  echo ' sniper -t <CIDR> -m discover -w <WORSPACE_ALIAS>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET SCAN ONLY SPECIFIC PORT"
+  echo ' sniper -t <TARGET> -m port -p <portnum>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET FULLPORTONLY SCAN MODE"
+  echo ' sniper -t <TARGET> -fp'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET WEB MODE - PORT 80 + 443 ONLY!"
+  echo ' sniper -t <TARGET> -m web'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET HTTP WEB PORT MODE"
+  echo ' sniper -t <TARGET> -m webporthttp -p <port>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET HTTPS WEB PORT MODE"
+  echo ' sniper -t <TARGET> -m webporthttps -p <port>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET HTTP WEBSCAN MODE"
+  echo ' sniper -t <TARGET> -m webscan '
+  echo ""
+  echo -e "$OKBLUE[*]$RESET ENABLE BRUTEFORCE"
+  echo ' sniper -t <TARGET> -b'
+
+  logoecho ""
+  echo -e "$OKBLUE[*]$RESET NORMAL MODE"
+  echo ' sniper -t <TARGET>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET SPECIFY CUSTOM CONFIG FILE"
+  echo ' sniper -c /full/path/to/sniper.conf -t <TARGET> -m <MODE> -w <WORKSPACE>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET NORMAL MODE + OSINT + RECON"
+  echo ' sniper -t <TARGET> -o -re'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET STEALTH MODE + OSINT + RECON"
+  echo ' sniper -t <TARGET> -m stealth -o -re'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET DISCOVER MODE"
+  echo ' sniper -t <CIDR> -m discover -w <WORSPACE_ALIAS>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET SCAN ONLY SPECIFIC PORT"
+  echo ' sniper -t <TARGET> -m port -p <portnum>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET FULLPORTONLY SCAN MODE"
+  echo ' sniper -t <TARGET> -fp'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET WEB MODE - PORT 80 + 443 ONLY!"
+  echo ' sniper -t <TARGET> -m web'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET HTTP WEB PORT MODE"
+  echo ' sniper -t <TARGET> -m webporthttp -p <port>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET HTTPS WEB PORT MODE"
+  echo ' sniper -t <TARGET> -m webporthttps -p <port>'
+  echo ""
+  echo -e "$OKBLUE[*]$RESET HTTP WEBSCAN MODE"
+  echo ' sniper -t <TARGET> -m webscan '
+  echo ""
+  echo -e "$OKBLUE[*]$RESET ENABLE BRUTEFORCE"
+  echo ' sniper -t <TARGET> -b'
+
